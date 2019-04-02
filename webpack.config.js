@@ -8,8 +8,8 @@ module.exports = {
     extensions: ['.js', '.ts']
   },
   entry: {
-    main: "./src/index.ts",
-    vendor: "./src/vendor.js"
+    polyfills: "./src/polyfills.ts",
+    main: "./src/app.ts"
   },
   output: {
     path: path.resolve(__dirname, 'dist'), // output directory
@@ -32,6 +32,10 @@ module.exports = {
       {
         test: /\.scss$/,
         loader: ["style-loader", "css-loader?sourceMap", "sass-loader?sourceMap"]
+      },
+      {
+        test: /\.html$/,
+        loader: "html-loader"
       }
     ]
   },
@@ -50,6 +54,14 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "src/index.html",
       inject: "body"
-    })
-  ]
+    }),
+      new webpack.ContextReplacementPlugin(
+          /\@angular(\\|\/)core(\\|\/)fesm5/,
+          path.resolve(__dirname, 'src'),{}
+      )
+  ],
+    devtool: "source-map",
+    devServer: {
+        historyApiFallback: true
+    }
 };
